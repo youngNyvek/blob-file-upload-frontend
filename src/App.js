@@ -1,17 +1,18 @@
 import React, { useRef } from "react";
-import axios from "axios";
 import "./App.css";
 
 const App = () => {
   const testeRef = useRef();
 
-  const axiosTeste = async () => {
+  const getFileExtension = fileType => {
+    return fileType.split("/")[1];
+  };
+
+  const createFormData = async () => {
     const formData = new FormData();
 
     for (let file of testeRef.current.files) {
-      const splitName = file.name.split(".")[1];
-
-      const fileExtension = splitName[splitName.length - 1];
+      const fileExtension = getFileExtension(file.type);
 
       const changeName = new File([file], `changedname.${fileExtension}`, {
         type: file.type
@@ -19,8 +20,6 @@ const App = () => {
 
       formData.append("file", changeName);
     }
-
-    await axios.post("http://localhost:3807/api/fileupload/upload", formData);
   };
 
   return (
@@ -32,7 +31,7 @@ const App = () => {
         onChange={() => console.log(Array.from(testeRef.current.files))}
       />
 
-      <button onClick={axiosTeste}>Anexar arquivos</button>
+      <button onClick={createFormData}>Enviar arquivos</button>
     </div>
   );
 };
